@@ -97,6 +97,42 @@ teardown() {
   [[ "$(cat "${BATS_TEST_TMPDIR}/notified")" == *"long break"* ]]
 }
 
+@test "pomodoro.sh - a transition runs the configured hook command" {
+  _run_hook() { echo "HOOK:$*" >> "${BATS_TEST_TMPDIR}/hook"; }
+  set_tmux_option @pomodoro_revamped_state running
+  set_tmux_option @pomodoro_revamped_last_phase work
+  set_tmux_option @pomodoro_revamped_on_break "play-sound"
+  set_tmux_option @pomodoro_revamped_start -400
+  run main status
+  [[ "$(cat "${BATS_TEST_TMPDIR}/hook")" == "HOOK:play-sound" ]]
+}
+
+@test "pomodoro.sh - the hook runs even when notifications are off" {
+  _run_hook() { echo "HOOK:$*" >> "${BATS_TEST_TMPDIR}/hook"; }
+  set_tmux_option @pomodoro_revamped_notifications 0
+  set_tmux_option @pomodoro_revamped_state running
+  set_tmux_option @pomodoro_revamped_last_phase work
+  set_tmux_option @pomodoro_revamped_on_break "play-sound"
+  set_tmux_option @pomodoro_revamped_start -400
+  run main status
+  [[ "$(cat "${BATS_TEST_TMPDIR}/hook")" == "HOOK:play-sound" ]]
+  [[ ! -f "${BATS_TEST_TMPDIR}/notified" ]]
+}
+
+@test "pomodoro.sh - status exports the segment for theme integration" {
+  set_tmux_option @pomodoro_revamped_state running
+  set_tmux_option @pomodoro_revamped_start 1000
+  run main status
+  [[ "$(get_tmux_option @pomodoro_status "")" == "${output}" ]]
+  [[ -n "$(get_tmux_option @pomodoro_status "")" ]]
+}
+
+@test "pomodoro.sh - status export clears when idle" {
+  set_tmux_option @pomodoro_status "stale"
+  run main status
+  [[ -z "$(get_tmux_option @pomodoro_status "")" ]]
+}
+
 @test "pomodoro.sh - main routes toggle, skip, and cancel" {
   _now() { echo 1000; }
   run main toggle
@@ -108,6 +144,7 @@ teardown() {
 
 @test "pomodoro.sh - host-probe seams are callable" {
   run _now
+  run _run_hook "true"
   local bin="${BATS_TEST_TMPDIR}/nbin"
   mkdir -p "${bin}"
   printf '#!/bin/sh\nexit 0\n' > "${bin}/osascript"

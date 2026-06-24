@@ -35,6 +35,8 @@ set -g status-right '#{pomodoro_status} | %H:%M'
 
 It renders the phase color, the `MM:SS` countdown, and `[interval/total]`, for example `23:20 [1/4]`. It is empty when no timer is running.
 
+Each render also writes the same segment to the `@pomodoro_status` tmux option, so a theme or another plugin can read the current value with `#{@pomodoro_status}` without invoking the script.
+
 ## Controls
 
 | Key | Action |
@@ -65,6 +67,9 @@ Then press `prefix + I`, and add `#{pomodoro_status}` to your status line.
 | `@pomodoro_revamped_intervals` | `4` | work periods before a long break |
 | `@pomodoro_revamped_show_interval` | `1` | set to `0` to hide the `[n/N]` counter |
 | `@pomodoro_revamped_notifications` | `1` | set to `0` to disable desktop notifications |
+| `@pomodoro_revamped_on_work` | unset | shell command run when a work phase begins |
+| `@pomodoro_revamped_on_break` | unset | shell command run when a short break begins |
+| `@pomodoro_revamped_on_long_break` | unset | shell command run when a long break begins |
 | `@pomodoro_revamped_toggle_key` | `p` | start / pause / resume key |
 | `@pomodoro_revamped_cancel_key` | `P` | cancel key |
 | `@pomodoro_revamped_skip_key` | `_` | skip-phase key |

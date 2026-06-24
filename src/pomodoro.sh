@@ -26,6 +26,9 @@ _notify() {
     notify-send "${1}" "${2}" >/dev/null 2>&1
   fi
 }
+# _run_hook CMD -> run a user transition command in the background, managed by
+# tmux so the status render never waits on it.
+_run_hook() { tmux run-shell -b -- "${1}" 2>/dev/null; }
 
 _pomo_minutes() {
   local m
@@ -59,14 +62,24 @@ _pomo_current() {
   echo "${phase} ${remaining} ${index} ${state}"
 }
 
-# _pomo_maybe_notify PHASE -> fire a notification once when the phase changes.
+# _pomo_run_hook PHASE -> run the configured transition command for PHASE, if any.
+_pomo_run_hook() {
+  local cmd
+  cmd=$(get_tmux_option "@pomodoro_revamped_on_${1}" "")
+  [[ -n "${cmd}" ]] && _run_hook "${cmd}"
+}
+
+# _pomo_maybe_notify PHASE -> on a phase change, run the transition hook and fire
+# a notification. The hook runs whether or not notifications are enabled; only the
+# desktop notification is gated.
 _pomo_maybe_notify() {
-  [[ "$(get_tmux_option "@pomodoro_revamped_notifications" "1")" == "1" ]] || return 0
   local last
   last=$(get_tmux_option "@pomodoro_revamped_last_phase" "")
   [[ "${last}" == "${1}" ]] && return 0
   set_tmux_option "@pomodoro_revamped_last_phase" "${1}"
   [[ -z "${last}" ]] && return 0
+  _pomo_run_hook "${1}"
+  [[ "$(get_tmux_option "@pomodoro_revamped_notifications" "1")" == "1" ]] || return 0
   case "${1}" in
     work)       _notify "Pomodoro" "Back to work" ;;
     break)      _notify "Pomodoro" "Take a short break" ;;
@@ -76,13 +89,17 @@ _pomo_maybe_notify() {
 
 pomodoro_status() {
   local cur
-  cur="$(_pomo_current)" || return 0
+  cur="$(_pomo_current)" || { set_tmux_option "@pomodoro_status" ""; return 0; }
   local phase remaining index state
   read -r phase remaining index state <<< "${cur}"
   _pomo_maybe_notify "${phase}"
   local paused=0
   [[ "${state}" == "paused" ]] && paused=1
-  pomodoro_render_segment "${phase}" "${remaining}" "${index}" "$(_intervals)" "${paused}"
+  local segment
+  segment="$(pomodoro_render_segment "${phase}" "${remaining}" "${index}" "$(_intervals)" "${paused}")"
+  # Export the rendered segment so a theme can read it via #{@pomodoro_status}.
+  set_tmux_option "@pomodoro_status" "${segment}"
+  printf '%s\n' "${segment}"
 }
 
 pomodoro_toggle() {
