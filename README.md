@@ -4,7 +4,7 @@
 
 **A Pomodoro timer in your tmux status bar, with zero temp files: all state lives in tmux options.**
 
-[![Tests](https://github.com/gufranco/tmux-pomodoro-revamped/actions/workflows/tests.yml/badge.svg)](https://github.com/gufranco/tmux-pomodoro-revamped/actions/workflows/tests.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Tests](https://github.com/gufranco/tmux-pomodoro-revamped/actions/workflows/tests.yml/badge.svg)](https://github.com/gufranco/tmux-pomodoro-revamped/actions/workflows/tests.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](CHANGELOG.md)
 
 </div>
 
