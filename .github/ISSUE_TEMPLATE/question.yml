@@ -6,8 +6,8 @@ body:
     attributes:
       value: |
         Before asking, please check:
-        - [README](https://github.com/gufranco/tmux-pomodoro-revamped#readme)
-        - [Existing issues](https://github.com/gufranco/tmux-pomodoro-revamped/issues?q=is%3Aissue)
+        - [README](https://github.com/tmux-revamped/tmux-pomodoro-revamped#readme)
+        - [Existing issues](https://github.com/tmux-revamped/tmux-pomodoro-revamped/issues?q=is%3Aissue)
 
   - type: textarea
     id: question

@@ -4,7 +4,7 @@
 
 **A Pomodoro timer in your tmux status bar, with zero temp files: all state lives in tmux options.**
 
-[![Tests](https://github.com/gufranco/tmux-pomodoro-revamped/actions/workflows/tests.yml/badge.svg)](https://github.com/gufranco/tmux-pomodoro-revamped/actions/workflows/tests.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](CHANGELOG.md)
+[![Tests](https://github.com/tmux-revamped/tmux-pomodoro-revamped/actions/workflows/tests.yml/badge.svg)](https://github.com/tmux-revamped/tmux-pomodoro-revamped/actions/workflows/tests.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](CHANGELOG.md)
 
 </div>
 
@@ -12,7 +12,7 @@
 
 A Pomodoro timer that counts down work and break intervals in the status bar. The whole timeline is computed from a single start epoch, so there is **no temp file** anywhere (the original keeps seven in `/tmp`), nothing to clean up, and no `/tmp` collision between users. State lives entirely in tmux server options, and the phase is computed on demand, so the render never spawns a background process.
 
-Built from [tmux-plugin-template](https://github.com/gufranco/tmux-plugin-template).
+Built from [tmux-plugin-template](https://github.com/tmux-revamped/tmux-plugin-template).
 
 <table>
 <tr>
@@ -52,7 +52,7 @@ All three keys are configurable.
 With [TPM](https://github.com/tmux-plugins/tpm), add to `~/.tmux.conf`:
 
 ```tmux
-set -g @plugin 'gufranco/tmux-pomodoro-revamped'
+set -g @plugin 'tmux-revamped/tmux-pomodoro-revamped'
 ```
 
 Then press `prefix + I`, and add `#{pomodoro_status}` to your status line.
