@@ -37,3 +37,49 @@ teardown() {
   set_tmux_option @pomodoro_revamped_show_interval "0"
   [[ "$(pomodoro_render_segment work 1400 1 4 0)" == "#[fg=red]23:20#[default]" ]]
 }
+
+@test "render.sh - a progress bar is prepended when enabled" {
+  set_tmux_option @pomodoro_revamped_show_progress "1"
+  set_tmux_option @pomodoro_revamped_progress_width "4"
+  run pomodoro_render_segment work 750 1 4 0 1500
+  [[ "${output}" == "#[fg=red]##-- 12:30 [1/4]#[default]" ]]
+}
+
+@test "render.sh - the progress bar honors custom glyphs" {
+  set_tmux_option @pomodoro_revamped_show_progress "1"
+  set_tmux_option @pomodoro_revamped_progress_width "4"
+  set_tmux_option @pomodoro_revamped_bar_filled "="
+  set_tmux_option @pomodoro_revamped_bar_empty "."
+  run pomodoro_render_segment work 0 1 4 0 1500
+  [[ "${output}" == "#[fg=red]==== 00:00 [1/4]#[default]" ]]
+}
+
+@test "render.sh - the progress bar stays off without a phase length" {
+  set_tmux_option @pomodoro_revamped_show_progress "1"
+  run pomodoro_render_segment work 750 1 4 0 0
+  [[ "${output}" == "#[fg=red]12:30 [1/4]#[default]" ]]
+}
+
+@test "render.sh - the finish time appends when enabled" {
+  set_tmux_option @pomodoro_revamped_show_finish "1"
+  run pomodoro_render_segment work 1400 1 4 0 1500 "14:32"
+  [[ "${output}" == "#[fg=red]23:20 [1/4] ends 14:32#[default]" ]]
+}
+
+@test "render.sh - the finish time is skipped when empty" {
+  set_tmux_option @pomodoro_revamped_show_finish "1"
+  run pomodoro_render_segment work 1400 1 4 0 1500 ""
+  [[ "${output}" == "#[fg=red]23:20 [1/4]#[default]" ]]
+}
+
+@test "render.sh - the daily goal counter appends when enabled" {
+  set_tmux_option @pomodoro_revamped_show_goal "1"
+  run pomodoro_render_segment work 1400 1 4 0 1500 "" 3 6
+  [[ "${output}" == "#[fg=red]23:20 [1/4] 3/6#[default]" ]]
+}
+
+@test "render.sh - the goal counter is skipped without a goal" {
+  set_tmux_option @pomodoro_revamped_show_goal "1"
+  run pomodoro_render_segment work 1400 1 4 0 1500 "" 3 ""
+  [[ "${output}" == "#[fg=red]23:20 [1/4]#[default]" ]]
+}

@@ -20,6 +20,9 @@ chmod +x "${POMO_CMD}" 2>/dev/null || true
 tmux bind-key "$(get_key "@pomodoro_revamped_toggle_key" "p")" run-shell "${POMO_CMD} toggle"
 tmux bind-key "$(get_key "@pomodoro_revamped_cancel_key" "P")" run-shell "${POMO_CMD} cancel"
 tmux bind-key "$(get_key "@pomodoro_revamped_skip_key" "_")" run-shell "${POMO_CMD} skip"
+tmux bind-key "$(get_key "@pomodoro_revamped_restart_key" "R")" run-shell "${POMO_CMD} restart"
+tmux bind-key "$(get_key "@pomodoro_revamped_menu_key" "o")" run-shell "${POMO_CMD} menu"
+tmux bind-key "$(get_key "@pomodoro_revamped_help_key" "?")" run-shell "${POMO_CMD} help"
 
 placeholders=(
   "\#{pomodoro_status}"

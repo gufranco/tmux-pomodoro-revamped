@@ -4,11 +4,11 @@
 
 **A Pomodoro timer in your tmux status bar, with zero temp files: all state lives in tmux options.**
 
-[![Tests](https://github.com/tmux-revamped/tmux-pomodoro-revamped/actions/workflows/tests.yml/badge.svg)](https://github.com/tmux-revamped/tmux-pomodoro-revamped/actions/workflows/tests.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](CHANGELOG.md)
+[![Tests](https://github.com/tmux-revamped/tmux-pomodoro-revamped/actions/workflows/tests.yml/badge.svg)](https://github.com/tmux-revamped/tmux-pomodoro-revamped/actions/workflows/tests.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)](CHANGELOG.md)
 
 </div>
 
-**work + breaks** · **no temp files** · **tmux 1.9 to 3.5** · **51** tests · **95%+** coverage
+**work + breaks** · **no temp files** · **tmux 1.9 to 3.5** · **94** tests · **95%+** coverage
 
 A Pomodoro timer that counts down work and break intervals in the status bar. The whole timeline is computed from a single start epoch, so there is **no temp file** anywhere (the original keeps seven in `/tmp`), nothing to clean up, and no `/tmp` collision between users. State lives entirely in tmux server options, and the phase is computed on demand, so the render never spawns a background process.
 
@@ -37,6 +37,8 @@ It renders the phase color, the `MM:SS` countdown, and `[interval/total]`, for e
 
 Each render also writes the same segment to the `@pomodoro_status` tmux option, so a theme or another plugin can read the current value with `#{@pomodoro_status}` without invoking the script.
 
+Each render also publishes machine-readable options for sibling plugins and themes: `@pomodoro_phase` (work, break, or long_break), `@pomodoro_remaining` (seconds left), `@pomodoro_fraction` (percent elapsed), `@pomodoro_week` (a glyph-free weekly focus sparkline), and `@pomodoro_today` (work periods completed today). The weekly tally is a bounded 7-slot ring kept in tmux options, so there is still no temp file.
+
 ## Controls
 
 | Key | Action |
@@ -44,8 +46,11 @@ Each render also writes the same segment to the `@pomodoro_status` tmux option, 
 | `prefix + p` | start, or pause/resume a running timer |
 | `prefix + P` | cancel the timer |
 | `prefix + _` | skip to the next phase |
+| `prefix + R` | restart the current phase |
+| `prefix + o` | open the control menu |
+| `prefix + ?` | open the help popup |
 
-All three keys are configurable.
+All keys are configurable.
 
 ## Install
 
@@ -70,6 +75,21 @@ Then press `prefix + I`, and add `#{pomodoro_status}` to your status line.
 | `@pomodoro_revamped_on_work` | unset | shell command run when a work phase begins |
 | `@pomodoro_revamped_on_break` | unset | shell command run when a short break begins |
 | `@pomodoro_revamped_on_long_break` | unset | shell command run when a long break begins |
+| `@pomodoro_revamped_show_progress` | `0` | set to `1` to prepend an ASCII progress bar |
+| `@pomodoro_revamped_progress_width` | `8` | progress bar width in cells |
+| `@pomodoro_revamped_bar_filled` | `#` | filled progress-bar glyph |
+| `@pomodoro_revamped_bar_empty` | `-` | empty progress-bar glyph |
+| `@pomodoro_revamped_show_finish` | `0` | set to `1` to append `ends HH:MM` |
+| `@pomodoro_revamped_show_goal` | `0` | set to `1` to append the daily `done/goal` counter |
+| `@pomodoro_revamped_goal` | `6` | daily focus-session goal |
+| `@pomodoro_revamped_warn_seconds` | `0` | seconds before a phase ends to warn once; `0` disables |
+| `@pomodoro_revamped_quiet_hours` | unset | window like `22:00-07:00` that suppresses alerts |
+| `@pomodoro_revamped_bell` | `0` | set to `1` to ring the terminal bell on a phase change |
+| `@pomodoro_revamped_on_cycle` | unset | shell command run when a long break (cycle) begins |
+| `@pomodoro_revamped_on_warn` | unset | shell command run at the end-of-phase warning |
+| `@pomodoro_revamped_restart_key` | `R` | restart-phase key |
+| `@pomodoro_revamped_menu_key` | `o` | control-menu key |
+| `@pomodoro_revamped_help_key` | `?` | help-popup key |
 | `@pomodoro_revamped_toggle_key` | `p` | start / pause / resume key |
 | `@pomodoro_revamped_cancel_key` | `P` | cancel key |
 | `@pomodoro_revamped_skip_key` | `_` | skip-phase key |
